@@ -1,78 +1,52 @@
-/* -------- login.css -------- */
-
-/* whole page */
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
-    sans-serif;
-  background: #f5f5dc; /* beige */
-  color: #333;
-}
-
-/* center everything */
-.login-wrapper {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* card */
-.login-card {
-  padding: 2rem 2.5rem;
-  background: #ffffffda; /* translucent white */
-  border: 2px solid #556b2f; /* olive */
-  border-radius: 8px;
-  box-shadow: 0 4px 12px 0 #556b2f33;
-  width: 100%;
-  max-width: 360px;
-}
-
-/* fields */
-.login-field {
+.Title {
+  text-align: center;
   margin-bottom: 1rem;
+  font-size: 2rem;
+  color: #333;
+  font-weight: bold;
 }
 
-.login-field label {
-  display: block;
-  margin-bottom: 0.35rem;
-  font-weight: 600;
-  color: #556b2f;
+.login-wrapper {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #7c8ba2;
 }
 
-.login-field input {
-  width: 100%;
-  padding: 0.55rem 0.75rem;
-  border: 1.5px solid #556b2f66;
-  border-radius: 4px;
-  background: #fdfdfb;
-  transition: border-color 0.2s;
+
+form {
+  background: white;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 200px;
 }
 
-.login-field input:focus {
+
+input {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
   outline: none;
-  border-color: #556b2f;
+  transition: border-color 0.3s;
 }
 
-/* button */
-.login-btn {
-  width: 100%;
-  padding: 0.6rem 0;
-  background: #556b2f; /* olive */
-  color: #f5f5dc;      /* beige text */
-  font-weight: 600;
+button {
+  padding: 0.75rem;
+  background-color: black;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: background-color 0.3s;
 }
-
-.login-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px -4px #556b2f88;
-}
-
-.login-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 3px 8px -4px #556b2f88;
+button:hover {
+  background-color: #652669;
 }

@@ -1,86 +1,34 @@
-import { useState } from 'react';
+import { useState , type ChangeEvent, type FormEvent} from "react";
 import './register.css';
+//import type { AxiosResponse } from "axios";
 
-function Register() {
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirm: '',
-  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+function Register(){
+    const[formData, setFormData] =useState({username:'', password:'', email:''})
+    
+    const handleChange=(e: ChangeEvent<HTMLInputElement>)=>{
+        const{name, value}=e.target;
+        setFormData({...formData,[name]:value})
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Registration data:', form);
-    // with real registration logic
-  };
+    }
+    const handleSubmit=(e: FormEvent<HTMLFormElement>)=>{
+        e.preventDefault();
+        console.log(formData)
 
-  return (
-    <div className="register-wrapper">
-      <form className="register-card" onSubmit={handleSubmit}>
-        <h2>Register</h2>
-
-        {/* Name */}
-        <div className="register-field">
-          <label htmlFor="name">Name</label>
-          <input
-            id="name"
-            type="text"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
+        
+    }
+    return(
+        <div className="register-container">
+            <form onSubmit={handleSubmit}>
+                <label className="RegisterTitle">Register</label>
+                <input name="username" className="UserName" onChange={handleChange} value={formData.username} placeholder=" Username" type="text"/>
+                <input name="password" onChange={handleChange} value={formData.password} placeholder="Password" type="text" />
+                <input name="email" onChange={handleChange} value={formData.email} placeholder="Email" type="text"/>
+                <button type="submit"> Submit</button>
+                
+            </form>
         </div>
-
-        {/* Email */}
-        <div className="register-field">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        {/* Password */}
-        <div className="register-field">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        {/* Confirm password */}
-        <div className="register-field">
-          <label htmlFor="confirm">Confirm Password</label>
-          <input
-            id="confirm"
-            type="password"
-            name="confirm"
-            value={form.confirm}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <button className="register-btn" type="submit">
-          Sign Up
-        </button>
-      </form>
-    </div>
-  );
+    )
 }
 
 export default Register;
