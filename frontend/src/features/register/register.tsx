@@ -1,34 +1,49 @@
-import { useState , type ChangeEvent, type FormEvent} from "react";
-import './register.css';
-//import type { AxiosResponse } from "axios";
+import React, { useState } from 'react';
+import axiosInstance from '../shared/config/axiosInstance';
+import { useNavigate } from 'react-router-dom';
+import './Register.css';
 
+const Register: React.FC = () => {
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    username: '',
+    email: '',
+    password: '',
+    role: 'user',
+    bio: '',
+    province: '',
+    skills: '',
+    experience: ''
+  });
 
-function Register(){
-    const[formData, setFormData] =useState({username:'', password:'', email:''})
-    
-    const handleChange=(e: ChangeEvent<HTMLInputElement>)=>{
-        const{name, value}=e.target;
-        setFormData({...formData,[name]:value})
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const data = { ...form, skills: form.skills.split(',') };
+      const res = await axiosInstance.post('/auth/register', data);
+      localStorage.setItem('token', res.data.token);
+      navigate('/profile');
+    } catch (err: any) {
+      alert(err.response?.data.message || 'Registration failed');
     }
-    const handleSubmit=(e: FormEvent<HTMLFormElement>)=>{
-        e.preventDefault();
-        console.log(formData)
+  };
 
-        
-    }
-    return(
-        <div className="register-container">
-            <form onSubmit={handleSubmit}>
-                <label className="RegisterTitle">Register</label>
-                <input name="username" className="UserName" onChange={handleChange} value={formData.username} placeholder=" Username" type="text"/>
-                <input name="password" onChange={handleChange} value={formData.password} placeholder="Password" type="text" />
-                <input name="email" onChange={handleChange} value={formData.email} placeholder="Email" type="text"/>
-                <button type="submit"> Submit</button>
-                
-            </form>
-        </div>
-    )
-}
+  return (
+    <form className="register-form" onSubmit={handleSubmit}>
+      <input placeholder="Username" name="username" onChange={handleChange} required />
+      <input placeholder="Email" name="email" onChange={handleChange} required />
+      <input type="password" placeholder="Password" name="password" onChange={handleChange} required />
+      <textarea placeholder="Bio" name="bio" onChange={handleChange}></textarea>
+      <input placeholder="Province" name="province" onChange={handleChange} />
+      <input placeholder="Skills (comma separated)" name="skills" onChange={handleChange} />
+      <input placeholder="Experience" name="experience" onChange={handleChange} />
+      <button type="submit">Register</button>
+    </form>
+  );
+};
 
 export default Register;
