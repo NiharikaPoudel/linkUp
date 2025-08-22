@@ -1,29 +1,45 @@
-import express from 'express';
-import cors from 'cors';
+import express from "express";
+import cors from "cors";
+import authRoutes from "./routes/auth.route.js";
+import userRoutes from "./routes/user.route.js";
 
 const app = express();
 
-// Enable CORS so frontend at localhost:5173 can access backend
-app.use(cors({ origin: 'http://localhost:5174', credentials: true }));
+// ✅ Allow frontend at 5173 & 5174
+const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
 
-// Middleware to parse JSON bodies
+app.use(cors({
+  origin: function(origin, callback){
+    // allow requests with no origin like Postman
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      const msg = `CORS policy: The origin ${origin} is not allowed`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+}));
+
+// Parse JSON
 app.use(express.json());
 
-// Simple root route
-app.get('/', (_req, res) => {
-  res.send("Hello Niharika, This is the Backend Homepage.");
-});
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
-// Login route (dummy check for now)
-app.post('/api/auth/login', (req, res) => {
-  const { username, password } = req.body;
+// Test route
+app.get("/", (req, res) => res.send("API running!"));
 
-  // Replace with your real DB authentication logic later
-  if (username === 'test' && password === '1234') {
-    return res.json({ token: 'abc123', user: { name: 'Test User' } });
-  }
+// 404 handler
+app.use((req, res) => res.status(404).json({ message: "Route not found" }));
 
-  return res.status(401).json({ message: 'Invalid credentials' });
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error("Global error:", err.message);
+  res.status(500).json({ message: "Server error", error: err.message });
 });
 
 export default app;
