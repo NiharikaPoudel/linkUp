@@ -1,47 +1,97 @@
-import React, { useEffect, useState } from 'react';
-import axiosInstance from '../shared/config/axiosInstance';
-import './ProfilePage.css';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axiosInstance from "../shared/config/axiosInstance";
+import type { AxiosResponse } from "axios";
 
-interface Profile {
-  username?: string;
-  bio?: string;
-  province?: string;
+import "./profilepage.css";
+
+interface User {
+  name: string;
+  email: string;
+  contactNumber: string;
+  address: string;
+  qualification: string;
+  professionalField: string;
+  bio: string;
   skills?: string[];
   experience?: string;
+  profilePicture?: { url: string };
 }
 
-const ProfilePage: React.FC = () => {
-  const [profile, setProfile] = useState<Profile>({});
-  const token = localStorage.getItem('token');
+const UserProfile: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const res = await axiosInstance.get('/auth/profile');
-      setProfile(res.data);
-    };
-    if (token) fetchProfile();
-  }, [token]);
+    if (id) {
+      axiosInstance
+        .get<User>(`/users/${id}`)
+        .then((res: AxiosResponse<User>) => setUser(res.data))
+        .catch((err: unknown) =>
+          console.error("Error fetching user:", err)
+        );
+    }
+  }, [id]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setProfile({ ...profile, [e.target.name]: e.target.value });
-  };
-
-  const handleUpdate = async () => {
-    const data = { ...profile, skills: Array.isArray(profile.skills) ? profile.skills : profile.skills?.split(',') };
-    await axiosInstance.put('/auth/profile', data);
-    alert('Profile updated');
-  };
+  if (!user) {
+    return <div className="loading">Loading profile...</div>;
+  }
 
   return (
-    <div className="profile-page">
-      <input name="username" value={profile.username || ''} onChange={handleChange} placeholder="Username"/>
-      <textarea name="bio" value={profile.bio || ''} onChange={handleChange} placeholder="Bio"/>
-      <input name="province" value={profile.province || ''} onChange={handleChange} placeholder="Province"/>
-      <input name="skills" value={profile.skills ? profile.skills.join(',') : ''} onChange={handleChange} placeholder="Skills"/>
-      <input name="experience" value={profile.experience || ''} onChange={handleChange} placeholder="Experience"/>
-      <button onClick={handleUpdate}>Update Profile</button>
+    <div className="profile-container">
+      <div className="profile-card">
+        {/* Left: Profile Picture */}
+        <div className="profile-left">
+          <img
+            src={user.profilePicture?.url || "https://via.placeholder.com/150?text=No+Image"}
+            alt={user.name}
+            className="profile-img"
+          />
+        </div>
+
+        {/* Right: User Info */}
+        <div className="profile-right">
+          <h2 className="profile-title">{user.name}</h2>
+          <div className="profile-field">
+            <label>Email:</label>
+            <p>{user.email}</p>
+          </div>
+          <div className="profile-field">
+            <label>Contact No:</label>
+            <p>{user.contactNumber}</p>
+          </div>
+          <div className="profile-field">
+            <label>Address:</label>
+            <p>{user.address}</p>
+          </div>
+          <div className="profile-field">
+            <label>Qualification:</label>
+            <p>{user.qualification}</p>
+          </div>
+          <div className="profile-field">
+            <label>Professional Field:</label>
+            <p>{user.professionalField}</p>
+          </div>
+          {user.skills && user.skills.length > 0 && (
+            <div className="profile-field">
+              <label>Skills:</label>
+              <p>{user.skills.join(", ")}</p>
+            </div>
+          )}
+          {user.experience && (
+            <div className="profile-field">
+              <label>Experience:</label>
+              <p>{user.experience}</p>
+            </div>
+          )}
+          <div className="profile-field">
+            <label>Bio:</label>
+            <p>{user.bio}</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default ProfilePage;
+export default UserProfile;

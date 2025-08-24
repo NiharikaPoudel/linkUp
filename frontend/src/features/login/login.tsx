@@ -1,34 +1,55 @@
-import React, { useState } from 'react';
-import axiosInstance from '../shared/config/axiosInstance';
-import { useNavigate } from 'react-router-dom';
-import './Login.css';
+import { useState, type ChangeEvent, type FormEvent } from "react"
+import './login.css';
+import { useNavigate } from "react-router-dom";
+import { login } from "../shared/config/api";
+/*import {useForm} from "react-hook-form";*/
+import type { AxiosResponse, AxiosError} from "axios";
 
-const Login: React.FC = () => {
-  const navigate = useNavigate();
-  const [form, setForm] = useState({ email: '', password: '' });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await axiosInstance.post('/auth/login', form);
-      localStorage.setItem('token', res.data.token);
-      navigate('/profile');
-    } catch (err: any) {
-      alert(err.response?.data.message || 'Login failed');
+export default function Login(){
+    const [formData, setFormData] = useState({username:'', password:''})
+    const navigate=useNavigate()
+
+    const handleChange= (e: ChangeEvent<HTMLInputElement>)=>{
+        const {name, value} =e.target;
+        setFormData({...formData, [name]:value})
     }
-  };
+    const handleSubmit=(e: FormEvent<HTMLFormElement>)=>{
+        e.preventDefault();
 
-  return (
-    <form className="login-form" onSubmit={handleSubmit}>
-      <input name="email" placeholder="Email" onChange={handleChange} required />
-      <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-      <button type="submit">Login</button>
-    </form>
-  );
-};
-
-export default Login;
+       
+        login(formData).then((res: AxiosResponse)=>{
+            localStorage.setItem('token', res.data.token)
+            localStorage.setItem('currentUser', JSON.stringify(res.data.user));
+            navigate('/Home');
+        }
+        ).catch(
+            (error: AxiosError) => {
+                const message = (error.response?.data as { message?: string })?.message ?? 'Server Error';
+                alert(message);
+            }
+        ).finally(()=>{
+            console.log('Okay')  
+        })
+    }
+    return(
+        <div className="login-wrapper">
+            <div className="login-card">
+                <form onSubmit={handleSubmit}>
+                    <label className="Title"> Login</label>
+                    <input name="username" onChange= {handleChange} value={formData.username} placeholder="Username" type="text"/>
+                    <input name="password" onChange= {handleChange} value={formData. password} placeholder="Password" type="password"/>
+                    <button type="submit"> Submit</button>
+                    <div className="register-link">
+                        Don't have an account?{' '}
+                        <span className="register-link-text" onClick={() => navigate('/register')}>
+                          Register here.
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    )
+}
+//export default Login;   

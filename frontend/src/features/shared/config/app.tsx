@@ -1,9 +1,11 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Login from '../../../login/Login';
-import Register from '../../../register/Register';
-import Home from '../../../home/Home';
-import ProfilePage from '../../../profilepage/ProfilePage';
+
+
+import Login from '../../login/Login';
+import Register from '../../register/register';
+import Home from '../../home/home';
+import ProfilePage from '../../profilepage/ProfilePage';
 
 const App: React.FC = () => {
   return (
@@ -11,7 +13,9 @@ const App: React.FC = () => {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/profile" element={<ProfilePage />} />
+      <Route path='/home' element = {<Home/>} />
+      <Route path="/profilepage/:id" element={<ProfilePage />} />
+
     </Routes>
   );
 };
