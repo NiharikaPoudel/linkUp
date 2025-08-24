@@ -1,67 +1,22 @@
-import express from 'express';
-import User from '../models/User.js';
-import authMiddleware from '../middleware/authMiddleware.js';
+import { Router} from 'express';
+const router = Router();
+import { getUserList, getUserById } from '../controllers/user.controller.js';
+import { deleteProfilePic, uploadProfilePic } from '../controllers/profile.picture.controller.js';
+import { upload } from '../middleware/image-uploader.middleware.js';
+import { authMiddleware } from '../middleware/auth.middleware.js'; 
 
-const router = express.Router();
+/*router.get("/list", checkToken, getUserList);
+router.get("/search", checkToken, searchUsers);
+router.get("/getUserByUsername",checkToken, getUserByUsername );
+router.patch("/uploadProfilePic", checkToken, upload.single('image'), uploadProfilePic);*/
+// GET all users
+router.get('/', authMiddleware, getUserList);
+//router.get("/user", getUserList);
 
-// Get all users (protected route)
-router.get('/', authMiddleware, async (req, res) => {
-  try {
-    const users = await User.find({ isActive: true })
-      .select('-password')
-      .sort({ createdAt: -1 });
+// GET user by ID
+router.get('/:id', authMiddleware, getUserById);
 
-    res.json({
-      success: true,
-      users
-    });
-  } catch (error) {
-    console.error('Get users error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error'
-    });
-  }
-});
 
-// Update user profile
-router.put('/profile', authMiddleware, async (req, res) => {
-  try {
-    const { fullName, province, district, role, skills } = req.body;
-
-    const user = await User.findByIdAndUpdate(
-      req.userId,
-      {
-        fullName,
-        province,
-        district,
-        role,
-        skills
-      },
-      { new: true, runValidators: true }
-    );
-
-    res.json({
-      success: true,
-      message: 'Profile updated successfully',
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        fullName: user.fullName,
-        province: user.province,
-        district: user.district,
-        role: user.role,
-        skills: user.skills
-      }
-    });
-  } catch (error) {
-    console.error('Update profile error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error'
-    });
-  }
-});
-
+router.patch('/uploadProfilePic', authMiddleware, upload.single('image'), uploadProfilePic);
+router .delete("deleteProfilepIC", authMiddleware, deleteProfilePic);
 export default router;
