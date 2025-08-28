@@ -12,27 +12,52 @@ const userSchema = new Schema({
   email: {
     type: String,
     required: true,
-    unique: true, // optional but recommended
+    unique: true,
   },
-  qualification: {
+  fullName: {
     type: String,
-  },
-  professionalField: {
-    type: String,
+    required: true,
   },
   address: {
     type: String,
+    default: "",
   },
-  contactNumber: {
+  skills: [{
     type: String,
-  },
+    default: []
+  }],
   bio: {
     type: String,
+    default: "",
+  },
+  experience: {
+    type: String,
+    default: "",
+  },
+  contact: {
+    phone: { type: String, default: "" },
+    linkedin: { type: String, default: "" },
+    github: { type: String, default: "" },
+    website: { type: String, default: "" }
   },
   profilePicture: {
     url: { type: String, default: "" },
     public_id: { type: String, default: "" }
-}
+  },
+  qualification: {
+    type: String,
+    default: "",
+  },
+  professionalField: {
+    type: String,
+    default: "",
+  },
+  contactNumber: {
+    type: String,
+    default: "",
+  }
+}, {
+  timestamps: true
 });
 
 const User = model("User", userSchema);

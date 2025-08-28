@@ -1,9 +1,10 @@
 import { Router} from 'express';
 const router = Router();
 import { getUserList, getUserById } from '../controllers/user.controller.js';
-import { deleteProfilePic, uploadProfilePic } from '../controllers/profile.picture.controller.js';
-import { upload } from '../middleware/image-uploader.middleware.js';
+import { uploadProfilePic } from '../controllers/profile.picture.controller.js';
+
 import { authMiddleware } from '../middleware/auth.middleware.js'; 
+import { upload } from "../middleware/image-upload.middleware.js";
 
 /*router.get("/list", checkToken, getUserList);
 router.get("/search", checkToken, searchUsers);
@@ -18,5 +19,8 @@ router.get('/:id', authMiddleware, getUserById);
 
 
 router.patch('/uploadProfilePic', authMiddleware, upload.single('image'), uploadProfilePic);
-router .delete("deleteProfilepIC", authMiddleware, deleteProfilePic);
+
+
+// Profile picture upload route
+router.post("/uploadProfilePic", authMiddleware, upload.single("image"), uploadProfilePic);
 export default router;
